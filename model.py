@@ -15,7 +15,7 @@ from skimage import color, data, restoration
 from scipy.signal import convolve2d
 from ultralytics import YOLO
 
-model = YOLO('best.pt')
+model = YOLO('best_l.pt')
 def model_predict(uploaded_image):
     #uploaded_image = Image.open(uploaded_file)
     res = model.predict(uploaded_image, agnostic_nms = True, augment = False, iou = 0.7, save = True)
@@ -91,7 +91,7 @@ def get_rooms_info(results):
 
         if classes.size == 0:
             for col in column_names[1:]:
-                combined_data[col] = 'ND'
+                combined_data[col] = ['ND']
             res_data.append(combined_data)
             continue
 
@@ -121,21 +121,22 @@ def get_rooms_info(results):
 
 
         for col in column_names[1:]:
-            combined_data[col] = list(set([d[col] for d in ocr_list if col in d])) or 'ND'
-        combined_data['img_name'] = result.path[result.path.rfind('/') + 1:]
+            combined_data[col] = list(set([d[col] for d in ocr_list if col in d])) or ['ND']
+        combined_data['img_name'] = Path(result.path).name
 
         est = np.round(np.median(estimate_footage(foot_list, conf_list, pixel_footages), axis=0), 3)
         cnt = 0
         for k in list(combined_data.keys())[:-1]:
-            if combined_data[k] != 'ND':
+            if combined_data[k] != ['ND']:
                 for j in range(len(combined_data[k])):
                     if conf_list[cnt] > 0.8 and foot_list[cnt] != 0 and 0.5 < foot_list[cnt] / est[cnt] < 1.5:
-                        combined_data[k][j] = foot_list[cnt]
+                        combined_data[k][j] = str(foot_list[cnt])
                     elif est.all() == 0:
-                        combined_data[k][j] = 0
+                        combined_data[k][j] = '0'
                     else:
-                        combined_data[k][j] = est[cnt]
+                        combined_data[k][j] = (str(est[cnt])+' est.')
                     cnt += 1
+        print(combined_data)
         res_data.append(combined_data)
     df = pd.DataFrame(res_data, columns=column_names)
     return df

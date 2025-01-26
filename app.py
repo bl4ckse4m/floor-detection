@@ -80,7 +80,9 @@ def infer_floor_plan(image):
 def analyze_floor_plans(images):
     all_results = []
 
-    for img in images:
+    my_bar = st.progress(0, text="analysing images...")
+    for k, img in enumerate(images):
+        my_bar.progress((k+1)/len(images), text="analysing images...")
         try:
             # Perform analysis (placeholder function)
             df, marked_img = infer_floor_plan(img)
@@ -89,6 +91,7 @@ def analyze_floor_plans(images):
         except Exception as e:
             st.error(f"Error processing image: {str(e)}")
 
+    my_bar.empty()
     return all_results
 
 
@@ -104,6 +107,7 @@ if infer_button and uploaded_images:
 
 # Main content
 if spec_df is not None:
+    print(spec_df)
     df_placeholder.dataframe(spec_df, use_container_width=True, hide_index = True)
 
 # Footer with download button
@@ -123,6 +127,7 @@ if spec_df is not None:
 
 
     xlsx = convert_to_excel(spec_df)
+
 
     st.download_button(
         label="Download Specifications as CSV",
