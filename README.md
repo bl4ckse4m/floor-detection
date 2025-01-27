@@ -1,5 +1,8 @@
 # Описание проекта
 
+### Kaggle
+https://www.kaggle.com/code/sensum/floor-scan-yolo11-easyocr
+
 ### Dependencies
 Install poetry
 ```
