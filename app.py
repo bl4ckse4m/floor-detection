@@ -118,13 +118,13 @@ if infer_button or st.session_state.uploads:
                 st.session_state.results = results
                 spec_df = pd.concat([df for df, _ in results], ignore_index=True)
                 #spec_df, marked_image = infer_floor_plan(uploaded_image_names)
-                image_placeholder.image(st.session_state.results[uploaded_image_names.index(option)][1], caption=f"Analyzed Floor Plan for {uploaded_image_names[0]}", use_container_width=True)
+                image_placeholder.image(st.session_state.results[uploaded_image_names.index(option)][1], caption="Analyzed Floor Plan", use_container_width=True)
             except:
                 st.error("An error occurred while analyzing the floor plan.")
     elif st.session_state.results is not None:
         spec_df = pd.concat([df for df, _ in st.session_state.results], ignore_index=True)
         image_placeholder.image(st.session_state.results[uploaded_image_names.index(option)][1],
-                                caption=f"Analyzed Floor Plan for {uploaded_image_names[0]}", use_container_width=True)
+                                caption="Analyzed Floor Plan", use_container_width=True)
 
 # Main content
 if spec_df is not None:

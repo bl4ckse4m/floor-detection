@@ -15,7 +15,7 @@ from skimage import color, data, restoration
 from scipy.signal import convolve2d
 from ultralytics import YOLO
 
-model = YOLO('best_l.pt')
+model = YOLO('weights/best_l.pt')
 def model_predict(uploaded_image):
     #uploaded_image = Image.open(uploaded_file)
     res = model.predict(uploaded_image, agnostic_nms = True, augment = False, iou = 0.7, save = True)
