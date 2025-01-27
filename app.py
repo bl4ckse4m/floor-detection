@@ -128,7 +128,6 @@ if infer_button or st.session_state.uploads:
 
 # Main content
 if spec_df is not None:
-    print(spec_df)
     df_placeholder.dataframe(spec_df, use_container_width=True, hide_index = True)
 
 # Footer with download button
