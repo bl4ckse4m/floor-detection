@@ -19,16 +19,27 @@ st.subheader("Upload a floor plan image and analyze its specifications")
 uploaded_image = None
 infer_button = st.button("Infer")
 
+#Session state
+if 'results' not in st.session_state:
+    st.session_state.results = None
+
+if 'uploads' not in st.session_state:
+    st.session_state.uploads = None
+
 # Image upload
 
 temp_file_path = None
 uploaded_files = st.file_uploader("Choose a floor plan image", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+st.session_state.uploads = uploaded_files
+
 
 spec_df = None
 marked_image = None
 
 uploaded_image_names = []
 uploaded_images = []
+
+
 
 subdir = 'uploads'
 os.makedirs(subdir, exist_ok=True)
@@ -43,8 +54,8 @@ def save_to_subdir(images, names):
         img.save(img_path)
         #saved_images[temp_dir.name][f"floor_plan_{i}"] = img_path
 
-if uploaded_files is not None:
-    for file in uploaded_files:
+if st.session_state.uploads is not None:
+    for file in st.session_state.uploads:
         uploaded_images.append(Image.open(file))
         uploaded_image_names.append(file.name)
     save_to_subdir(uploaded_images, uploaded_image_names)
@@ -59,8 +70,12 @@ if uploaded_files is not None:
 
     with col1:
         if uploaded_images:
+            option = st.selectbox(
+                "Select an image to display",
+                uploaded_image_names,
+            )
             image_placeholder = st.empty()
-            image_placeholder.image(uploaded_images[0], caption="Uploaded Floor Plan", use_container_width=True)
+            image_placeholder.image(uploaded_images[uploaded_image_names.index(option)], caption="Uploaded Floor Plan", use_container_width=True)
 
     with col2:
         df_placeholder = st.empty()
@@ -95,15 +110,21 @@ def analyze_floor_plans(images):
     return all_results
 
 
-if infer_button and uploaded_images:
-    with st.spinner('Analyzing floor plan...'):
-        try:
-            results = analyze_floor_plans(uploaded_image_names)
-            spec_df = pd.concat([df for df, _ in results], ignore_index=True)
-            #spec_df, marked_image = infer_floor_plan(uploaded_image_names)
-            image_placeholder.image(results[0][1], caption=f"Analyzed Floor Plan for {uploaded_image_names[0]}", use_container_width=True)
-        except:
-            st.error("An error occurred while analyzing the floor plan.")
+if infer_button or st.session_state.uploads:
+    if infer_button:
+        with st.spinner('Analyzing floor plan...'):
+            try:
+                results = analyze_floor_plans(uploaded_image_names)
+                st.session_state.results = results
+                spec_df = pd.concat([df for df, _ in results], ignore_index=True)
+                #spec_df, marked_image = infer_floor_plan(uploaded_image_names)
+                image_placeholder.image(st.session_state.results[uploaded_image_names.index(option)][1], caption=f"Analyzed Floor Plan for {uploaded_image_names[0]}", use_container_width=True)
+            except:
+                st.error("An error occurred while analyzing the floor plan.")
+    elif st.session_state.results is not None:
+        spec_df = pd.concat([df for df, _ in st.session_state.results], ignore_index=True)
+        image_placeholder.image(st.session_state.results[uploaded_image_names.index(option)][1],
+                                caption=f"Analyzed Floor Plan for {uploaded_image_names[0]}", use_container_width=True)
 
 # Main content
 if spec_df is not None:
