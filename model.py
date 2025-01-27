@@ -136,7 +136,7 @@ def get_rooms_info(results):
                     else:
                         combined_data[k][j] = (str(est[cnt])+' est.')
                     cnt += 1
-        print(combined_data)
+        #print(combined_data)
         res_data.append(combined_data)
     df = pd.DataFrame(res_data, columns=column_names)
     return df

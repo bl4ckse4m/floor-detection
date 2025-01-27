@@ -1,5 +1,18 @@
 # Описание проекта
 
+### Dependencies
+Install poetry
+```
+pip install poetry
+```
+
+### How to use web-app
+Press the button `Browse files` to upload images
+
+Press the button `Infer` to get the results
+
+Press `Download` button to download the results
+
 ## Задача
 
 В изначальной постановке задачи планировалось создание приложения, с помощью которого можно было бы по загруженной фотографии плана этажа получить ведомость с информацией о площадях её квартир и комнат.  
@@ -83,3 +96,4 @@
 - Реализованы элементы в приложении:
   - Выдвижной список для изображений.  
   - Сохранение состояния кнопок и выводов через `st.session_state`.
+
